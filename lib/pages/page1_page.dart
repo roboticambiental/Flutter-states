@@ -1,4 +1,6 @@
+import 'package:estados/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/user.dart';
 
 class Page1Page extends StatelessWidget {
@@ -6,20 +8,51 @@ class Page1Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Inyección de dependencia:
+    final userCtrl = Get.put(UserController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Page 1'),
+        actions: [
+          IconButton(
+            onPressed: () => userCtrl.clearUser(),
+            icon: Icon(Icons.logout),
+          )
+        ],
       ),
-      body: UserInformation(),
+      body: Obx(() => userCtrl.userExists.value
+          ? UserInformation(user: userCtrl.user.value)
+          : NoInfo()),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.forward),
-        onPressed: () => Navigator.pushNamed(context, 'page2'),
+        //onPressed: () => Navigator.pushNamed(context, 'page2'),
+        onPressed: () => Get.toNamed('/page2', arguments: {
+          'name': 'Bob',
+          'age': 33,
+        }),
+      ),
+    );
+  }
+}
+
+class NoInfo extends StatelessWidget {
+  const NoInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Text('There is no user selected'),
       ),
     );
   }
 }
 
 class UserInformation extends StatelessWidget {
+  final User user;
+
+  const UserInformation({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +71,10 @@ class UserInformation extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            title: Text('Name:'),
+            title: Text('Name: ${user.name}'),
           ),
           ListTile(
-            title: Text('Age:'),
+            title: Text('Age: ${user.age}'),
           ),
           ListTile(
             title: Text(
@@ -53,15 +86,9 @@ class UserInformation extends StatelessWidget {
             ),
           ),
           Divider(),
-          ListTile(
-            title: Text('Profession 1'),
-          ),
-          ListTile(
-            title: Text('Profession 1'),
-          ),
-          ListTile(
-            title: Text('Profession 1'),
-          ),
+          ...user.professions.map((profession) => ListTile(
+                title: Text('${profession}'),
+              )),
         ],
       ),
     );

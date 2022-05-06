@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:estados/pages/page1_page.dart';
 import 'package:estados/pages/page2_page.dart';
-import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -28,11 +29,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      initialRoute: 'page1',
-      routes: {
+
+      /*routes: {
         'page1': ( _ ) => Page1Page(),
         'page2': (_) => Page2Page(),
-      },
+      },*/
+      initialRoute: '/page1',
+      getPages: [
+        GetPage(name: '/page1', page: () => const Page1Page()),
+        GetPage(name: '/page2', page: () => Page2Page()),
+      ],
     );
   }
 }
